@@ -1,0 +1,16 @@
+# testlink
+'username': ''
+'password': ''
+'url': ''
+
+'Word': 
+ - 'a.docx'
+ - 'b.docx'
+
+'WordToExcel': 
+ - 'a.xlsx'
+ - 'b.xlsx'
+
+'Excel': 
+ - 'a.xlsx'
+ - 'b.xlsx'
