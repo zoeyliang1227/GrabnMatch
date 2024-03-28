@@ -1,4 +1,5 @@
 import time
+import os
 import yaml
 import openpyxl
 import pandas as pd
@@ -11,7 +12,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
 
-config = yaml.load(open('DG4278_config.yml'), Loader=yaml.Loader)
+config = yaml.load(open(os.path.abspath(os.path.join(os.getcwd(), os.path.pardir)+'\DG4278_config.yml')), Loader=yaml.Loader)
 file = 'DG4278'
 component_title = []
 time_string = datetime.now().strftime('%Y-%m-%d')
@@ -28,7 +29,7 @@ def get_driver():
     options.add_argument('--incognito')               # 啟動無痕
 
     driver = webdriver.Chrome(options=options)
-    url = config['url']
+    url = config['DG4278_url']
 
     # driver.implicitly_wait(10)
     # driver.get(url)
@@ -53,8 +54,11 @@ def main(first_component, second_component):
         driver = get_driver()
         
         login(driver)
+        dev_logger.info('Wait for check project...')
         check_project(driver)
+        dev_logger.info('Go to get components name')
         get_components_name(driver)        
+        dev_logger.info('Go to get issus')
         get_issus(driver, first_component, second_component)
         
         end = time.time()
@@ -62,13 +66,14 @@ def main(first_component, second_component):
 
     except Exception as e:
         dev_logger.critical(e, exc_info=True)
+        # input('Exit')
         
 def login(driver):
     dev_logger.info('Waiting for login...')
-    tool.Wait_Id(driver, 'i0116').send_keys(config['username']) 
+    tool.Wait_Id(driver, 'i0116').send_keys(config['DG4278_username']) 
     tool.Wait_Id(driver, 'idSIButton9').click() 
     time.sleep(3)
-    tool.Wait_Id(driver, 'i0118').send_keys(config['password']) 
+    tool.Wait_Id(driver, 'i0118').send_keys(config['DG4278_password']) 
     tool.Wait_Id(driver, 'idSIButton9').click() 
     number = tool.Wait_Id(driver, 'idRichContext_DisplaySign').text
     dev_logger.info(f'Please enter number on your phone: {number}')
@@ -78,10 +83,15 @@ def login(driver):
     # cookie2 = driver.get_cookies() #取得登入後cookie
     # with open("cookies.yml", "w") as f:
     #     yaml.safe_dump(data=cookie2, stream=f)
-    
+
 def check_project(driver):
     header_li = tool.Wait_Xpath(driver, '//*[@id="header"]/nav/div/div[2]/ul').find_elements(By.TAG_NAME, 'li')
+    p=0
     for h, hd in enumerate(header_li):
+        time.sleep(1)
+        if p == 1:
+            break
+        # print(hd.text)
         if hd.text == 'Projects':
             tool.Wait_Id(driver, 'browse_link').click()
             if tool.Wait_Id(driver, 'admin_main_proj_link_lnk').text == 'CPE Global Requirements (CPEGR)':
@@ -89,8 +99,11 @@ def check_project(driver):
             else:
                 history_li = tool.Wait_Xpath(driver, '//*[@id="project_history_main"]/ul').find_elements(By.TAG_NAME, 'li')
                 for h, ht in enumerate(history_li):
+                    time.sleep(1)
+                    # print(ht.text)
                     if ht.text == 'CPE Global Requirements (CPEGR)':
                         tool.Wait_Id(driver, ht.get_attribute('id')).click()
+                        p+=1
                         break
         else:
             continue
@@ -138,33 +151,27 @@ def component(driver):
 
         
 def get_issus(driver, first_component, second_component):
-        if first_component in component_title and second_component in component_title:
-            # print(component_title.index(first_component), component_title.index(second_component))
-            for i in range(component_title.index(first_component), component_title.index(second_component)+1):
-                components_page = tool.Wait_Xpath(driver, '//*[@id="sidebar"]/div/div[1]/nav/div/div/ul/li[5]/a')
-                actions = ActionChains(driver)
-                actions.click(components_page).perform()
-
-                check_page = tool.Xpath(driver, '//*[@id="components-table"]/tbody[2]/tr[' + str(i+1) +']/td[1]/div/a').text.replace("/", "")
-                # dev_logger.info(check_page, component_title[i])
-                if check_page == component_title[i]:
-                    tool.Xpath(driver, '//*[@id="components-table"]/tbody[2]/tr[' + str(i+1) +']/td[1]/div/a').click()
-                    dev_logger.info(f'Now at the {check_page}.')
-                issus_data = issus.issus(driver)
-                dev_logger.info('Go to excel.')
-                issus_df = pd.DataFrame(issus_data)
-
-                with pd.ExcelWriter(f'{time_string}{file}.xlsx', mode="a", engine="openpyxl") as writer:
-                    df = issus_df.fillna('').astype(str)
-                    for col in df.columns:
-                        df[col] = df[col].apply(lambda x: tool.data_clean(x))
-                    df.to_excel(writer, sheet_name=component_title[i], index=False)
-                dev_logger.info(f'{component_title[i]} data appended successfully.')
-                jira= tool.Wait_Xpath(driver, '//*[@id="logo"]/a')
-                if jira.text == 'CPS Jira':
-                    jira_text = jira.text
-                    jira.click()
-                    dev_logger.info(f'Turn to page {jira_text}.')
+    if first_component in component_title and second_component in component_title:
+        for i in range(component_title.index(first_component), component_title.index(second_component)+1):
+            check_page = tool.Xpath(driver, '//*[@id="components-table"]/tbody[2]/tr[' + str(i+1) +']/td[1]/div/a')
+            
+            # print(check_page.text.replace("/", ""), component_title[i])
+            if check_page.text.replace("/", "") == component_title[i]:
+                    check_page.click()
+            issus_data = issus.issus(driver, config)
+            dev_logger.info('Go to excel.')
+            issus_df = pd.DataFrame(issus_data)
+            with pd.ExcelWriter(f'{time_string}{file}.xlsx', mode="a", engine="openpyxl") as writer:
+                df = issus_df.fillna('').astype(str)
+                for col in df.columns:
+                    df[col] = df[col].apply(lambda x: tool.data_clean(x))
+                df.to_excel(writer, sheet_name=component_title[i], index=False)
+            dev_logger.info(f'{component_title[i]} data appended successfully.')
+            jira= tool.Wait_Xpath(driver, '//*[@id="logo"]/a')
+            if jira.text == 'CPS Jira':
+                jira_text = jira.text
+                jira.click()
+                dev_logger.info(f'Turn to page {jira_text}.')
 
 if __name__ == '__main__':
     # first_component = input('First component: ')
