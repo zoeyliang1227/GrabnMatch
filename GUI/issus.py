@@ -11,9 +11,9 @@ dev_logger = logger.get_logger(__name__)
 
 timeout = 20
 
-def issus(driver):
+def issus(driver, config):
     issus_data = {}
-    issus_text = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.XPATH, '//*[@id="search-header-view"]/div/h1'))).text
+    issus_text = tool.Wait_Xpath(driver, '//*[@id="search-header-view"]/div/h1').text
     dev_logger.info(f'Turn to page {issus_text}.')
 
     #get value from issus title
@@ -53,11 +53,20 @@ def issus(driver):
             
             #Go to description
             try:
-                time.sleep(2)
-                issus_tr.find_elements(By.TAG_NAME, 'td')[1].click()
-
-                WebDriverWait(driver, timeout).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="project-name-val"]')))
+                time.sleep(2)    
+                # print(issus_tr.find_elements(By.TAG_NAME, 'td')[1].find_element(By.CSS_SELECTOR, 'a').get_attribute('href'))
                 
+                #開啟新分頁
+                # print(config["DG4278_url"])
+                href = issus_tr.find_elements(By.TAG_NAME, 'td')[1].find_element(By.CSS_SELECTOR, 'a').get_attribute('href')
+                # print(href)
+                driver.execute_script("window.open('');")
+                driver.switch_to.window(driver.window_handles[1]) 
+                driver.get(href)
+                
+                time.sleep(2)
+                
+                WebDriverWait(driver, timeout).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="project-name-val"]')))
                 #OpCo
                 if tool.check_opco(driver) == True:
                     opco_text = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.XPATH, '//*[@id="customfield_24326-field"]/span'))).text.strip()
@@ -79,18 +88,17 @@ def issus(driver):
             
             except Exception as e:
                 dev_logger.critical(e, exc_info=True)
-
+                    
             #Traceability
-            try:                                                                                                
+            try:                                                                                                          
                 no_textcase = WebDriverWait(driver, timeout).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="ZephyrScaleIssuePanel"]/span/section/main/div/span[2]'))).text 
-                print(no_textcase)
                 if 'No test cases.' in no_textcase:
                     # pass
                     issus_data[list(issus_data.keys())[8]].append('')
                     issus_data[list(issus_data.keys())[9]].append('')
                     issus_data[list(issus_data.keys())[10]].append('')
                     issus_data[list(issus_data.keys())[11]].append('')
-                    # issus_data[list(issus_data.keys())[12]].append('')
+                    issus_data[list(issus_data.keys())[12]].append('')
             except:
                 total_div = []
                 if tool.load_more(driver) == True:
@@ -104,7 +112,7 @@ def issus(driver):
                         WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'css-rvtbkj'))).click()
                         time.sleep(3)
 
-                textcase = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'css-afeyfj'))).find_elements(By.TAG_NAME, 'li')
+                textcase = WebDriverWait(driver, timeout).until(EC.visibility_of_element_located((By.CLASS_NAME, 'css-afeyfj'))).find_elements(By.TAG_NAME, 'li')
                 # dev_logger.info(len(textcase))
                 a = 0 #第一行省略
                 for issus_span in textcase:
@@ -124,13 +132,15 @@ def issus(driver):
                     issus_data[list(issus_data.keys())[9]].append(issus_span.find_element(By.CLASS_NAME, 'css-tyqob8').text.strip())
                     issus_data[list(issus_data.keys())[10]].append(issus_span.find_element(By.CLASS_NAME, 'css-1mbo33i').text.strip())
                     issus_data[list(issus_data.keys())[11]].append(issus_span.find_elements(By.TAG_NAME, 'div')[3].get_attribute('aria-label'))
-                    # issus_data[list(issus_data.keys())[12]].append(issus_span.find_elements(By.TAG_NAME, 'span')[6].get_attribute('aria-label'))
+                    issus_data[list(issus_data.keys())[12]].append(issus_span.find_elements(By.TAG_NAME, 'span')[6].get_attribute('aria-label'))
                     # issus_data[list(issus_data.keys())[13]].append(issus_span.find_elements(By.TAG_NAME, 'span')[8].get_attribute('aria-label'))
 
                     a += 1
            
             dev_logger.info(f'Description and Test Cases has been added to {key_text}.')
-            driver.back()
+            #關掉新分頁，回到原本的頁面
+            driver.close()
+            driver.switch_to.window(driver.window_handles[0])
             time.sleep(2)
 
         # for key, value in issus_data.items():

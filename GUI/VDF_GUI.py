@@ -1,5 +1,6 @@
 import time
 import os
+import re
 import yaml
 import openpyxl
 import pandas as pd
@@ -13,6 +14,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
 
 config = yaml.load(open(os.path.abspath(os.path.join(os.getcwd(), os.path.pardir)+'\DG4278_config.yml')), Loader=yaml.Loader)
+# config = yaml.load(open('DG4278_config.yml'), Loader=yaml.Loader)
 file = 'DG4278'
 component_title = []
 time_string = datetime.now().strftime('%Y-%m-%d')
@@ -66,7 +68,7 @@ def main(first_component, second_component):
 
     except Exception as e:
         dev_logger.critical(e, exc_info=True)
-        # input('Exit')
+        input('Exit')
         
 def login(driver):
     dev_logger.info('Waiting for login...')
@@ -174,8 +176,6 @@ def get_issus(driver, first_component, second_component):
                 dev_logger.info(f'Turn to page {jira_text}.')
 
 if __name__ == '__main__':
-    # first_component = input('First component: ')
-    # second_component = input('Second component(If only need to inquire one, enter the same as the first component): ')
-    first_component = 'Wireless Module'
-    second_component = 'Wireless Module'
+    first_component = input('First component: ')
+    second_component = input('Second component(If only need to inquire one, enter the same as the first component): ')
     main(first_component, second_component)
