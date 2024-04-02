@@ -23,8 +23,9 @@ def issus(driver, config):
             issus_th = driver.find_element(By.XPATH, '//*[@id="issuetable"]/thead/tr').find_elements(By.TAG_NAME, 'th')
             for i in range(1, len(issus_th)):
                 issus_th = driver.find_element(By.XPATH, '//*[@id="issuetable"]/thead/tr/th[' + str(i) +']/span').text
-                issus_data[issus_th]=[]
-
+                if issus_th != 'Reporter':
+                    issus_data[issus_th]=[]
+                    
     except Exception as e:
         dev_logger.critical(e, exc_info=True)
 
@@ -57,7 +58,6 @@ def issus(driver, config):
                 # print(issus_tr.find_elements(By.TAG_NAME, 'td')[1].find_element(By.CSS_SELECTOR, 'a').get_attribute('href'))
                 
                 #開啟新分頁
-                # print(config["DG4278_url"])
                 href = issus_tr.find_elements(By.TAG_NAME, 'td')[1].find_element(By.CSS_SELECTOR, 'a').get_attribute('href')
                 # print(href)
                 driver.execute_script("window.open('');")
@@ -80,7 +80,7 @@ def issus(driver, config):
 
                 if tool.check_description(driver) == True:
                     description_text = WebDriverWait(driver, timeout).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="descriptionmodule"]/div[2]'))).text.strip()
-                    # dev_logger.info(description_text)
+                    # print(description_text)
                     if key_text == list(issus_data.values())[1][-1] and summary_text == list(issus_data.values())[2][-1]:
                         issus_data[list(issus_data.keys())[7]].append(description_text)
                 else:
@@ -98,7 +98,7 @@ def issus(driver, config):
                     issus_data[list(issus_data.keys())[9]].append('')
                     issus_data[list(issus_data.keys())[10]].append('')
                     issus_data[list(issus_data.keys())[11]].append('')
-                    issus_data[list(issus_data.keys())[12]].append('')
+                    # issus_data[list(issus_data.keys())[12]].append('')
             except:
                 total_div = []
                 if tool.load_more(driver) == True:
@@ -113,7 +113,7 @@ def issus(driver, config):
                         time.sleep(3)
 
                 textcase = WebDriverWait(driver, timeout).until(EC.visibility_of_element_located((By.CLASS_NAME, 'css-afeyfj'))).find_elements(By.TAG_NAME, 'li')
-                # dev_logger.info(len(textcase))
+                # print(len(textcase))
                 a = 0 #第一行省略
                 for issus_span in textcase:
                     # WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.TAG_NAME, 'span')))
@@ -132,7 +132,7 @@ def issus(driver, config):
                     issus_data[list(issus_data.keys())[9]].append(issus_span.find_element(By.CLASS_NAME, 'css-tyqob8').text.strip())
                     issus_data[list(issus_data.keys())[10]].append(issus_span.find_element(By.CLASS_NAME, 'css-1mbo33i').text.strip())
                     issus_data[list(issus_data.keys())[11]].append(issus_span.find_elements(By.TAG_NAME, 'div')[3].get_attribute('aria-label'))
-                    issus_data[list(issus_data.keys())[12]].append(issus_span.find_elements(By.TAG_NAME, 'span')[6].get_attribute('aria-label'))
+                    # issus_data[list(issus_data.keys())[12]].append(issus_span.find_elements(By.TAG_NAME, 'span')[6].get_attribute('aria-label'))
                     # issus_data[list(issus_data.keys())[13]].append(issus_span.find_elements(By.TAG_NAME, 'span')[8].get_attribute('aria-label'))
 
                     a += 1
@@ -162,6 +162,7 @@ def issus(driver, config):
         # print(total)
         time.sleep(2)
         check_results = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.XPATH, '//*[@id="main"]/div/div[2]/div/div/div/div[2]/div[1]/span/span[3]'))).text
+        # print(issus_data.keys())
         # if (total == 25): 
         if (total == int(check_results)): 
             break
