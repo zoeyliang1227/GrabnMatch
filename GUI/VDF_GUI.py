@@ -13,8 +13,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
 
-config = yaml.load(open(os.path.abspath(os.path.join(os.getcwd(), os.path.pardir)+'\DG4278_config.yml')), Loader=yaml.Loader)
-# config = yaml.load(open('DG4278_config.yml'), Loader=yaml.Loader)
+# config = yaml.load(open(os.path.abspath(os.path.join(os.getcwd(), os.path.pardir)+'\DG4278_config.yml')), Loader=yaml.Loader)
+config = yaml.load(open('DG4278_config.yml'), Loader=yaml.Loader)
 file = 'DG4278'
 component_title = []
 time_string = datetime.now().strftime('%Y-%m-%d')
