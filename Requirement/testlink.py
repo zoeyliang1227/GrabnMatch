@@ -112,15 +112,9 @@ def find_from_testlink(GetFromPDF_list):
  
 def login(driver):
     print('Waiting for login...')
-    WebDriverWait(driver, timeout).until(
-        EC.presence_of_element_located((By.NAME, 'tl_login'))
-    ).send_keys(config['username'])
-    WebDriverWait(driver, timeout).until(
-        EC.presence_of_element_located((By.NAME, 'tl_password'))
-    ).send_keys(config['password'])
-    WebDriverWait(driver, timeout).until(
-        EC.presence_of_element_located((By.NAME, 'login_submit'))
-    ).click()
+    WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.NAME, 'tl_login'))).send_keys(config['username'])
+    WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.NAME, 'tl_password'))).send_keys(config['password'])
+    WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.NAME, 'login_submit'))).click()
     print('Waiting for the website to load...')
     # cookie2 = driver.get_cookies() #取得登入後cookie
     # with open('cookies.yml', 'w', encoding='utf-8') as f:

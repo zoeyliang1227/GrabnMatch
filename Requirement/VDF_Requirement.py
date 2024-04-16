@@ -52,7 +52,7 @@ def main():
     start = time.time()
     # word_to_excel()
     # merge()
-    vodafone.find_from_vodafone()
+    # vodafone.find_from_vodafone()
     get_name()
     get_from_testlink()
     mapping()
@@ -62,8 +62,8 @@ def main():
 
 def get_from_testlink():          
     # print(len(GetRequirement_data['Document ID']))
-    # Document_ID_text = testlink.find_from_testlink(GetRequirement_data['Document ID'])
-    # GetRequirement_data['Testlink'] = Document_ID_text
+    Document_ID_text = testlink.find_from_testlink(GetRequirement_data['Document ID'])
+    GetRequirement_data['Testlink'] = Document_ID_text
     
     # # print(Document_ID_text)
     # print(len(Document_ID_text))
@@ -89,6 +89,7 @@ def mapping():
         for row in ws.iter_rows():
             for cell in row:
                 align = Alignment(horizontal='fill')
+                # align = Alignment(wrap_text=False, shrink_to_fit=False, indent=0)      #wrap_text 自動換行 ; shrink_to_fit 縮小以適應
                 cell.alignment = align
                 
     mapping.close()
@@ -130,7 +131,7 @@ def merge():
     df_b = pd.read_excel(WordToExcel[1])
 
     merged_df = pd.concat([df_a, df_b], ignore_index=True)
-    sheet = WordToExcel[0].replace('.xlsx','')[-8:-3]+WordToExcel[1].replace('.xlsx','')[-3:]
+    sheet = df_a.replace('.xlsx','')[-8:-3]+df_b.replace('.xlsx','')[-3:]
     merged_df.to_excel('merged.xlsx', sheet_name=sheet,index=False)
     
 def get_name():
@@ -149,25 +150,24 @@ def get_name():
             
         make_dict(work1, work2)
     
-    k=0
     count_list=[]
     GetRequirement_data['Document ID']=[]    
     for key in GetRequirement_data:
         if key == 'Description':            
             for i in range(1, work1.max_row):
-                    
                 count_list.clear()
                 for b, description in enumerate(NameFromePDF_data.get(key)):
                     if is_blank_or_none(description) == False:
-                        # print(work1.cell(i+1 , k).row)
-                        test_str = re.sub(r'[^a-zA-Z0-9]', ' ', GetRequirement_data[key][i-1][:len(GetRequirement_data[key][i-1])//2])
+                        # print(work1.cell(i+1 , 2).row)
+                        test_str = re.sub(r'[^a-zA-Z0-9]', ' ', GetRequirement_data[key][i-1][len(GetRequirement_data[key][i-1])//4:int(len(GetRequirement_data[key][i-1])//1.5)])
                         if re.search(test_str, description) and is_blank_or_none(GetRequirement_data[key][i-1]) == False:
+                            # print(len(GetRequirement_data[key][i-1])//4, int(len(GetRequirement_data[key][i-1])//1.5))
                             # print(f'第 {i} 列')
                             # print(test_str, '111', description)
                             print(f'查看 {Excel[1]} 中 第 {b+2} 列有相似的 {GetRequirement_data[key][i-1]}') #第一個excel 從1開始，第二個excel從0開始，整體少2，故+2   
-                            # print(work2.cell(b+2, k).value)  
-                            if 'KIP-REQ' in work2.cell(b+2, k).value:
-                                GetRequirement_data['Document ID'].append(work2.cell(b+2, k).value)
+                            # print(work2.cell(b+2, 2).value)  
+                            if 'KIP-REQ' in work2.cell(b+2, 2).value:
+                                GetRequirement_data['Document ID'].append(work2.cell(b+2, 2).value)
 
                                 count_list.append(b+2)
                                 # print(len(count_list))
@@ -181,10 +181,8 @@ def get_name():
                 # print(f'第 {i} 列，{GetRequirement_data["Document ID"]}')
                 if len(count_list) == 0:
                     GetRequirement_data['Document ID'].append('')
-                    not_found.append(work1.cell(i+1 , k).row)
+                    not_found.append(work1.cell(i+1 , 2).row)
                     # print(f'         加入空白，list數{len(GetRequirement_data["Document ID"])}')
-
-        k+=1
         
 def is_blank_or_none(s):
     return s is None or len(s.strip()) == 0
