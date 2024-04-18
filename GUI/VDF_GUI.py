@@ -13,8 +13,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
 
-# config = yaml.load(open(os.path.abspath(os.path.join(os.getcwd(), os.path.pardir)+'\DG4278_config.yml')), Loader=yaml.Loader)
-config = yaml.load(open('DG4278_config.yml'), Loader=yaml.Loader)
+config = yaml.load(open(os.path.abspath(os.path.join(os.getcwd(), os.path.pardir)+'\DG4278_config.yml')), Loader=yaml.Loader)
+# config = yaml.load(open('DG4278_config.yml'), Loader=yaml.Loader)
 file = 'DG4278'
 component_title = []
 time_string = datetime.now().strftime('%Y-%m-%d')
@@ -155,6 +155,13 @@ def component(driver):
 def get_issus(driver, first_component, second_component):
     if first_component in component_title and second_component in component_title:
         for i in range(component_title.index(first_component), component_title.index(second_component)+1):
+            sidebar_li = tool.Wait_Xpath(driver, '//*[@id="sidebar"]/div/div[1]/nav/div/div/ul').find_elements(By.TAG_NAME, 'li')
+            for s, sb in enumerate(sidebar_li):
+                if sb.text == 'Components':                                                                                         
+                    components_page = tool.Wait_Xpath(driver, '//*[@id="sidebar"]/div/div[1]/nav/div/div/ul/li[' + str(s+1) +']/a')
+                    actions = ActionChains(driver)
+                    actions.click(components_page).perform()
+                    break
             check_page = tool.Xpath(driver, '//*[@id="components-table"]/tbody[2]/tr[' + str(i+1) +']/td[1]/div/a')
             
             # print(check_page.text.replace("/", ""), component_title[i])

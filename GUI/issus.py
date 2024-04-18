@@ -38,8 +38,8 @@ def issus(driver, config):
     issus_data['Name']=[]
     issus_data['status-lozenge']=[]
     issus_data['last-execution-status']=[]
-    # issus_data['play-button']=[]
-    # issus_data['remove-button']=[]
+    issus_data['play-button']=[]
+    issus_data['remove-button']=[]
     while True:
         tbody = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'tbody'))).find_elements(By.TAG_NAME, 'tr')
         for issus_tr in tbody:
