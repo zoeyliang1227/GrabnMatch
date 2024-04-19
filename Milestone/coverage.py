@@ -51,9 +51,9 @@ def compare(work1, work2, ws):
     a=0
     for key in dict1:
         for i in range(1, work1.max_row):
-            row_index = i+1+a
+            w1_row_index = i+1+a
             if key == 'Key':
-                for b, CPEGR in enumerate(dict2.get('Key')):            
+                for b, CPEGR in enumerate(dict2.get('Key')):        
                     if type(CPEGR) == str and is_blank_or_none(CPEGR) == False and  'CPEGR' in CPEGR and is_blank_or_none(dict1[key][i-1]) == False:
                         # print(dict1[key][i-1], '111', CPEGR, CPEGR.find('\n') != -1, re.search(dict1[key][i-1], CPEGR))
                         if re.search(dict1[key][i-1], CPEGR):
@@ -63,15 +63,19 @@ def compare(work1, work2, ws):
                             # print(work1.cell(i+1 , k).row)    #確認在哪一行
                             
                             # print(dict1[key][i-1], work1.cell(work1.cell(row_index, k).row, k).value)
-                            print(i, check(b, work2, dict1[key][i-1]))
-                            if check(b, work2, dict1[key][i-1]) > 0 and dict1[key][i-1] == work1.cell(work1.cell(row_index, k).row, k).value:
-                                work1.insert_rows(work1.cell(row_index , k).row+1, check(b, work2, dict1[key][i-1]))
-                                print(f'{work1.cell(work1.cell(row_index , k).row, k).value} 底下以新增 {check(b, work2, dict1[key][i-1])} 個空白行')
-                                a+=check(b, work2, dict1[key][i-1])
-                        
-                            
-                            work1.cell(work1.cell(row_index, k).row, 1).value = work2.cell(b+2, 1).value
-                            work1.cell(work1.cell(row_index, k).row, 6).value = work2.cell(b+2, 6).value
+                            # print(i, check(b, work2, dict1[key][i-1]))
+                            if check(b, work2, dict1[key][i-1]) > 0 and dict1[key][i-1] == work1.cell(work1.cell(w1_row_index, k).row, k).value:
+                                work1.insert_rows(work1.cell(w1_row_index , k).row+1, check(b, work2, dict1[key][i-1]))
+                                print(f'{work1.cell(work1.cell(w1_row_index , k).row, k).value} 底下以新增 {check(b, work2, dict1[key][i-1])} 個空白行')
+                                a+=check(b, work2, dict1[key][i-1])                        
+
+                            work1.cell(work1.cell(w1_row_index, k).row, 1).value = work2.cell(b+2, 1).value
+                            work1.cell(work1.cell(w1_row_index, k).row, 6).value = work2.cell(b+2, 6).value
+                            for z in range(check(b, work2, dict1[key][i-1])+1):
+                                work1.cell(work1.cell(w1_row_index+z, k).row, 9).value = work2.cell(b+2+z, 9).value
+                                work1.cell(work1.cell(w1_row_index+z, k).row, 10).value = work2.cell(b+2+z, 10).value
+                                # print(work2.cell(b+2+z, 9).value, work2.cell(b+2+z, 9).row)
+                                # print(work2.cell(b+2+z, 10).value, work2.cell(b+2+z, 10).row)
                             
                             
             else:
