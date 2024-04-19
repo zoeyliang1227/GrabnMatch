@@ -4,12 +4,13 @@ import re
 import time
 
 from openpyxl import load_workbook
+from openpyxl.styles import Font
 
 dict1={}
 dict2={}
 
-# mapping_excel = '2024-03-25DG4278.xlsx'
-mapping_excel = 'Book1.xlsx'
+mapping_excel = '2024-03-25DG4278.xlsx'
+# mapping_excel = 'Book1.xlsx'
 concat_excel = '2024-03-25_DG4278_Test_Matrix_NewReq.xlsx'
 
 def main():
@@ -18,12 +19,19 @@ def main():
     wb2 = load_workbook(concat_excel, read_only = False)
     
     for sheet in range(1, len(wb1.sheetnames)):
-        work1 = wb1[wb1.sheetnames[1]]
-        work2 = wb2[wb2.sheetnames[1]]
+        work1 = wb1[wb1.sheetnames[sheet]]
+        work2 = wb2[wb2.sheetnames[sheet]]
         
         make_dict(work1, work2)
         ws = wb1.sheetnames[1]
         compare(work1, work2, ws)
+        
+    for row_index, row in enumerate(work1.iter_rows(), start=1):
+        for cell in row:
+            if row_index == 1:
+                cell.font = Font(name='Arial', size=11, bold=True)
+            else:
+                cell.font = Font(name='Arial', size=11)
         
     wb1.save('DG4278_Test_Matrix_NewReq.xlsx')
     end = time.time()
@@ -69,11 +77,11 @@ def compare(work1, work2, ws):
                                 print(f'{work1.cell(work1.cell(w1_row_index , k).row, k).value} 底下以新增 {check(b, work2, dict1[key][i-1])} 個空白行')
                                 a+=check(b, work2, dict1[key][i-1])                        
 
-                            work1.cell(work1.cell(w1_row_index, k).row, 1).value = work2.cell(b+2, 1).value
-                            work1.cell(work1.cell(w1_row_index, k).row, 6).value = work2.cell(b+2, 6).value
+                            work1.cell(row=work1.cell(w1_row_index, k).row, column=1).value = work2.cell(b+2, 1).value
+                            work1.cell(row=work1.cell(w1_row_index, k).row, column=6).value = work2.cell(b+2, 6).value
                             for z in range(check(b, work2, dict1[key][i-1])+1):
-                                work1.cell(work1.cell(w1_row_index+z, k).row, 9).value = work2.cell(b+2+z, 9).value
-                                work1.cell(work1.cell(w1_row_index+z, k).row, 10).value = work2.cell(b+2+z, 10).value
+                                work1.cell(row=work1.cell(w1_row_index+z, k).row, column=9).value = work2.cell(b+2+z, 9).value
+                                work1.cell(row=work1.cell(w1_row_index+z, k).row, column=10).value = work2.cell(b+2+z, 10).value
                                 # print(work2.cell(b+2+z, 9).value, work2.cell(b+2+z, 9).row)
                                 # print(work2.cell(b+2+z, 10).value, work2.cell(b+2+z, 10).row)
                             
