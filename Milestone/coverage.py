@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import re
 import time
+import yaml
 
 from openpyxl import load_workbook
 from openpyxl.styles import Font
@@ -9,14 +10,13 @@ from openpyxl.styles import Font
 dict1={}
 dict2={}
 
-mapping_excel = '2024-03-25DG4278.xlsx'
-# mapping_excel = 'Book1.xlsx'
-concat_excel = '2024-03-25_DG4278_Test_Matrix_NewReq.xlsx'
+config = yaml.load(open(os.path.abspath(os.path.join(os.getcwd(), os.path.pardir)+'\DG4278_config.yml')), Loader=yaml.Loader)
+# config = yaml.load(open('DG4278_config.yml'), Loader=yaml.Loader)
 
 def main():
     start = time.time()
-    wb1 = load_workbook(mapping_excel, read_only = False)
-    wb2 = load_workbook(concat_excel, read_only = False)
+    wb1 = load_workbook(config['mapping_excel'], read_only = False)
+    wb2 = load_workbook(config['concat_excel'], read_only = False)
     
     for sheet in range(1, len(wb1.sheetnames)):
         work1 = wb1[wb1.sheetnames[sheet]]
@@ -65,7 +65,7 @@ def compare(work1, work2, ws):
                     if type(CPEGR) == str and is_blank_or_none(CPEGR) == False and  'CPEGR' in CPEGR and is_blank_or_none(dict1[key][i-1]) == False:
                         # print(dict1[key][i-1], '111', CPEGR, CPEGR.find('\n') != -1, re.search(dict1[key][i-1], CPEGR))
                         if re.search(dict1[key][i-1], CPEGR):
-                            print(f'查看 {concat_excel} 中 {work1}，第 {b+2} 列有相似的 {dict1[key][i-1]}') #第一個excel 從1開始，第二個excel從0開始，整體少2，故+2  
+                            print(f"查看 {config['concat_excel']} 中 {work1}，第 {b+2} 列有相似的 {dict1[key][i-1]}") #第一個excel 從1開始，第二個excel從0開始，整體少2，故+2  
                             # print(work1.cell(work1.cell(i+1 , k).row, 1).value) 
                             # print(work2.cell(b+2, 1).value) 
                             # print(work1.cell(i+1 , k).row)    #確認在哪一行
