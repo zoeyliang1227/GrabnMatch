@@ -34,10 +34,10 @@ def issus(driver, config):
     total = 0
     issus_data['OpCo']=[]
     issus_data['Description']=[]
-    issus_data['Link']=[]
-    issus_data['Name']=[]
-    issus_data['status-lozenge']=[]
-    issus_data['last-execution-status']=[]
+    # issus_data['Link']=[]
+    # issus_data['Name']=[]
+    # issus_data['status-lozenge']=[]
+    # issus_data['last-execution-status']=[]
     # issus_data['play-button']=[]
     # issus_data['remove-button']=[]
     while True:
@@ -89,53 +89,53 @@ def issus(driver, config):
             except Exception as e:
                 dev_logger.critical(e, exc_info=True)
                     
-            #Traceability
-            try:                                                                                                          
-                no_textcase = WebDriverWait(driver, timeout).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="ZephyrScaleIssuePanel"]/span/section/main/div/span[2]'))).text 
-                if 'No test cases.' in no_textcase:
-                    # pass
-                    issus_data[list(issus_data.keys())[8]].append('')
-                    issus_data[list(issus_data.keys())[9]].append('')
-                    issus_data[list(issus_data.keys())[10]].append('')
-                    issus_data[list(issus_data.keys())[11]].append('')
-                    # issus_data[list(issus_data.keys())[12]].append('')
-            except:
-                total_div = []
-                if tool.load_more(driver) == True:
-                    total_li = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'css-9duhdc'))).find_elements(By.TAG_NAME, 'div')
-                    for i in total_li:
-                        total_div.append(i.text)
+            # #Traceability
+            # try:                                                                                                          
+            #     no_textcase = WebDriverWait(driver, timeout).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="ZephyrScaleIssuePanel"]/span/section/main/div/span[2]'))).text 
+            #     if 'No test cases.' in no_textcase:
+            #         # pass
+            #         issus_data[list(issus_data.keys())[8]].append('')
+            #         issus_data[list(issus_data.keys())[9]].append('')
+            #         issus_data[list(issus_data.keys())[10]].append('')
+            #         issus_data[list(issus_data.keys())[11]].append('')
+            #         # issus_data[list(issus_data.keys())[12]].append('')
+            # except:
+            #     total_div = []
+            #     if tool.load_more(driver) == True:
+            #         total_li = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'css-9duhdc'))).find_elements(By.TAG_NAME, 'div')
+            #         for i in total_li:
+            #             total_div.append(i.text)
 
-                    load_check = (int((total_div[-1][-2:].strip()))-1)/5   #暫時用-1的方式，以達除完有餘數
-                    WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.XPATH, '//*[@id="ZephyrScaleIssuePanel"]/span/section/main/h2')))
-                    for click in range(int(load_check)):
-                        WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'css-rvtbkj'))).click()
-                        time.sleep(3)
+            #         load_check = (int((total_div[-1][-2:].strip()))-1)/5   #暫時用-1的方式，以達除完有餘數
+            #         WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.XPATH, '//*[@id="ZephyrScaleIssuePanel"]/span/section/main/h2')))
+            #         for click in range(int(load_check)):
+            #             WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'css-rvtbkj'))).click()
+            #             time.sleep(3)
 
-                textcase = WebDriverWait(driver, timeout).until(EC.visibility_of_element_located((By.CLASS_NAME, 'css-afeyfj'))).find_elements(By.TAG_NAME, 'li')
-                # print(len(textcase))
-                a = 0 #第一行省略
-                for issus_span in textcase:
-                    # WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.TAG_NAME, 'span')))
-                    # dev_logger.info(issus_span.find_elements(By.TAG_NAME, 'span')[6].get_attribute('aria-label'))
-                    if a != 0:
-                        issus_data[list(issus_data.keys())[0]].append('')
-                        issus_data[list(issus_data.keys())[1]].append('')
-                        issus_data[list(issus_data.keys())[2]].append('')
-                        issus_data[list(issus_data.keys())[3]].append('')
-                        issus_data[list(issus_data.keys())[4]].append('')
-                        issus_data[list(issus_data.keys())[5]].append('')
-                        issus_data[list(issus_data.keys())[6]].append('')
-                        issus_data[list(issus_data.keys())[7]].append('')
+            #     textcase = WebDriverWait(driver, timeout).until(EC.visibility_of_element_located((By.CLASS_NAME, 'css-afeyfj'))).find_elements(By.TAG_NAME, 'li')
+            #     # print(len(textcase))
+            #     a = 0 #第一行省略
+            #     for issus_span in textcase:
+            #         # WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.TAG_NAME, 'span')))
+            #         # dev_logger.info(issus_span.find_elements(By.TAG_NAME, 'span')[6].get_attribute('aria-label'))
+            #         if a != 0:
+            #             issus_data[list(issus_data.keys())[0]].append('')
+            #             issus_data[list(issus_data.keys())[1]].append('')
+            #             issus_data[list(issus_data.keys())[2]].append('')
+            #             issus_data[list(issus_data.keys())[3]].append('')
+            #             issus_data[list(issus_data.keys())[4]].append('')
+            #             issus_data[list(issus_data.keys())[5]].append('')
+            #             issus_data[list(issus_data.keys())[6]].append('')
+            #             issus_data[list(issus_data.keys())[7]].append('')
 
-                    issus_data[list(issus_data.keys())[8]].append(issus_span.find_element(By.CLASS_NAME, 'css-17wby6x').text.strip())
-                    issus_data[list(issus_data.keys())[9]].append(issus_span.find_element(By.CLASS_NAME, 'css-tyqob8').text.strip())
-                    issus_data[list(issus_data.keys())[10]].append(issus_span.find_element(By.CLASS_NAME, 'css-1mbo33i').text.strip())
-                    issus_data[list(issus_data.keys())[11]].append(issus_span.find_elements(By.TAG_NAME, 'div')[3].get_attribute('aria-label'))
-                    # issus_data[list(issus_data.keys())[12]].append(issus_span.find_elements(By.TAG_NAME, 'span')[6].get_attribute('aria-label'))
-                    # issus_data[list(issus_data.keys())[13]].append(issus_span.find_elements(By.TAG_NAME, 'span')[8].get_attribute('aria-label'))
+            #         issus_data[list(issus_data.keys())[8]].append(issus_span.find_element(By.CLASS_NAME, 'css-17wby6x').text.strip())
+            #         issus_data[list(issus_data.keys())[9]].append(issus_span.find_element(By.CLASS_NAME, 'css-tyqob8').text.strip())
+            #         issus_data[list(issus_data.keys())[10]].append(issus_span.find_element(By.CLASS_NAME, 'css-1mbo33i').text.strip())
+            #         issus_data[list(issus_data.keys())[11]].append(issus_span.find_elements(By.TAG_NAME, 'div')[3].get_attribute('aria-label'))
+            #         # issus_data[list(issus_data.keys())[12]].append(issus_span.find_elements(By.TAG_NAME, 'span')[6].get_attribute('aria-label'))
+            #         # issus_data[list(issus_data.keys())[13]].append(issus_span.find_elements(By.TAG_NAME, 'span')[8].get_attribute('aria-label'))
 
-                    a += 1
+            #         a += 1
            
             dev_logger.info(f'Description and Test Cases has been added to {key_text}.')
             #關掉新分頁，回到原本的頁面
