@@ -5,10 +5,15 @@ import time
 import yaml
 
 from openpyxl import load_workbook
-from openpyxl.styles import Font
+from openpyxl.styles import PatternFill, Font, Border, Side
 
 dict1={}
 dict2={}
+
+border = Border(left=Side(border_style='thin',color='000000'),
+right=Side(border_style='thin',color='000000'),
+top=Side(border_style='thin',color='000000'),
+bottom=Side(border_style='thin',color='000000'))
 
 config = yaml.load(open(os.path.abspath(os.path.join(os.getcwd(), os.path.pardir)+'\DG4278_config.yml')), Loader=yaml.Loader)
 # config = yaml.load(open('DG4278_config.yml'), Loader=yaml.Loader)
@@ -71,11 +76,17 @@ def compare(work1, work2, ws):
                                 print(f'{work1.cell(work1.cell(w1_row_index , k).row, k).value} 底下已新增 {check(b, work2, dict1[key][i-1])} 個空白行')
                                 a+=check(b, work2, dict1[key][i-1])                        
 
+                            for q in range(1, work2.max_column+1):
+                                work1.cell(row=1, column=q).value = work2.cell(1, q).value
+                                work1.cell(row=1, column=q).font  = Font(bold=True)
+                                work1.cell(row=1, column=q).border  = border
+                            
                             work1.cell(row=work1.cell(w1_row_index, k).row, column=1).value = work2.cell(b+2, 1).value
                             work1.cell(row=work1.cell(w1_row_index, k).row, column=6).value = work2.cell(b+2, 6).value
                             for z in range(check(b, work2, dict1[key][i-1])+1):
                                 work1.cell(row=work1.cell(w1_row_index+z, k).row, column=9).value = work2.cell(b+2+z, 9).value
                                 work1.cell(row=work1.cell(w1_row_index+z, k).row, column=10).value = work2.cell(b+2+z, 10).value
+                                work1.cell(row=work1.cell(w1_row_index+z, k).row, column=12).value = work2.cell(b+2+z, 12).value
                                 # print(work2.cell(b+2+z, 9).value, work2.cell(b+2+z, 9).row)
                                 # print(work2.cell(b+2+z, 10).value, work2.cell(b+2+z, 10).row)
                             
