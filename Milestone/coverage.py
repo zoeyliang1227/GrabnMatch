@@ -26,13 +26,6 @@ def main():
         ws = wb1.sheetnames[1]
         compare(work1, work2, ws)
         
-    for row_index, row in enumerate(work1.iter_rows(), start=1):
-        for cell in row:
-            if row_index == 1:
-                cell.font = Font(name='Arial', size=11, bold=True)
-            else:
-                cell.font = Font(name='Arial', size=11)
-        
     wb1.save('DG4278_Test_Matrix_NewReq.xlsx')
     end = time.time()
     print('Time elapsed: ' + str(start-end) + ' seconds')
