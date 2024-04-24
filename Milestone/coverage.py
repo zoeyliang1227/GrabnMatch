@@ -65,9 +65,10 @@ def compare(work1, work2, ws):
                             
                             # print(dict1[key][i-1], work1.cell(work1.cell(row_index, k).row, k).value)
                             # print(i, check(b, work2, dict1[key][i-1]))
+                            #新增空白行
                             if check(b, work2, dict1[key][i-1]) > 0 and dict1[key][i-1] == work1.cell(work1.cell(w1_row_index, k).row, k).value:
                                 work1.insert_rows(work1.cell(w1_row_index , k).row+1, check(b, work2, dict1[key][i-1]))
-                                print(f'{work1.cell(work1.cell(w1_row_index , k).row, k).value} 底下以新增 {check(b, work2, dict1[key][i-1])} 個空白行')
+                                print(f'{work1.cell(work1.cell(w1_row_index , k).row, k).value} 底下已新增 {check(b, work2, dict1[key][i-1])} 個空白行')
                                 a+=check(b, work2, dict1[key][i-1])                        
 
                             work1.cell(row=work1.cell(w1_row_index, k).row, column=1).value = work2.cell(b+2, 1).value
