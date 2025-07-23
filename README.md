@@ -1,21 +1,25 @@
-# Windows
+># Windows
 
+## Description
+- Convert `pdf` to `word` for data processing
+- Use **slelenium** to crawl web data and organize it into `excel`
+- Use **openpyxl** to compare different `excel`
+  
 ## Install
-
 - Install Python 3.11
 - pip install pipenv
 - python -m pipenv shell
 
 
 ## Run GUI
-python VDF_GUI.py
-pyinstaller -F VDF_GUI.py
-pyinstaller VDF_GUI.spec
+- ./GUI/python VDF_GUI.py
+- pyinstaller -F ./GUI/VDF_GUI.py
+- pyinstaller ./GUI/VDF_GUI.spec
 
 ## Run Milestone
-python coverage.py
-pyinstaller coverage.spec
+- python ./Milestone/coverage.py
+- pyinstaller ./Milestone/coverage.spec
 
 ## Run Requirement
-python VDF_Requirement.py
-pyinstaller -F VDF_Requirement.py
+- python ./Requirement/VDF_Requirement.py
+- pyinstaller -F ./Requirement/VDF_Requirement.py
